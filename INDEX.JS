@@ -16,7 +16,6 @@ class ShoppingList{
     get itemName(){
         return this._itemName;
     }
-
     set itemDescription(description){
         this._itemDescription = description;
     }
@@ -35,50 +34,66 @@ class ShoppingList{
 
 }
 const shoppingList = [];
- 
+var table_body=document.querySelector("#table-list tbody")
+var statusele = document.getElementById("hide_unhide");
+function renderitem(item){
+    console.log("renderitem")
+    const row=document.createElement("tr");
+    row.classList.add("row-element");
+    
+    const itemNameElement=document.createElement("td")
+    itemNameElement.textContent = item.itemName;
 
-function render(){
-    const table_body=document.querySelector("#table-list tbody")
+    const deleteButtonEle = document.createElement("td");
+    deleteButtonEle.classList.add("button_parent");
+    const deleteButton = document.createElement("button");
+    deleteButton.dataset.id = item.itemId;
+    deleteButton.classList.add("delete-btn");
+    deleteButton.innerHTML = '<i class="fa fa-trash-o"></i>';
+    
+    deleteButtonEle.appendChild(deleteButton);
+    row.appendChild(itemNameElement);
+    row.appendChild(deleteButtonEle)
+
+    if (item.isCompleted) {
+        itemNameElement.classList.add("marked-class");
+    }
+
+    itemNameElement.addEventListener("click", function() {
+        toggleCompletion(item, itemNameElement);
+    });
+    table_body.appendChild(row);
+}
+ 
+function renderhide(){
+    
     table_body.innerHTML = "";
     shoppingList.forEach(item=>{
-        if(!item.isDeleted){
-            const row=document.createElement("tr");
-            row.classList.add("row-element");
-            
-            const itemNameElement=document.createElement("td")
-            itemNameElement.textContent = item.itemName;
-
-            const deleteButtonEle = document.createElement("td");
-            deleteButtonEle.classList.add("button_parent");
-            const deleteButton = document.createElement("button");
-            deleteButton.dataset.id = item.itemId;
-            deleteButton.classList.add("delete-btn");
-            deleteButton.innerHTML = '<i class="fa fa-trash-o"></i>';
-
-            
-            deleteButtonEle.appendChild(deleteButton);
-            row.appendChild(itemNameElement);
-            row.appendChild(deleteButtonEle)
-
-            if (item.isCompleted) {
-                itemNameElement.classList.add("marked-class");
-            }
-
-            itemNameElement.addEventListener("click", function() {
-                toggleCompletion(item, itemNameElement);
-            });
-            table_body.appendChild(row);
+        if(!item.isDeleted && !item.isCompleted){
+            renderitem(item);
         }
     })
 }
 
-function productStatus(product){
-    return product.isCompleted;
+function render(){
+    table_body.innerHTML = "";
+    shoppingList.forEach(item=>{
+        if(!item.isDeleted){
+            renderitem(item);
+        }
+    })
+}
+
+function markedProductStatus(product){
+    return product.isCompleted && !product.isDeleted; 
+}
+function unMarkedProductionStatus(product){
+    return !product.isCompleted && !product.isDeleted;
 }
 function count(){
-    const c = shoppingList.filter(productStatus).length;
+    const mc = shoppingList.filter(markedProductStatus).length;
+    const umc = shoppingList.filter(unMarkedProductionStatus).length;
 
-   
     const markedSection = document.getElementById('info-1');
     markedSection.innerHTML="";
     const unmarkedSection = document.getElementById('info-2');
@@ -87,37 +102,46 @@ function count(){
     const mHead = document.createElement('h3');
     const mPara = document.createElement('p');
     mHead.textContent = "Marked Items Count";
-    mPara.textContent = c;
+    mPara.textContent = mc;
 
     markedSection.appendChild(mHead);
     markedSection.appendChild(mPara);
-
-    
     
     const unmHead = document.createElement('h3');
     const unmPara = document.createElement('p');
     unmHead.textContent = "UnMarked Items Count";
-    unmPara.textContent =shoppingList.length-c;
+    unmPara.textContent =umc;
 
     unmarkedSection.appendChild(unmHead);
     unmarkedSection.appendChild(unmPara);
     
 }
 
-render();
-count();
+
+function conditioanlrendering(){
+    if(statusele.innerHTML==="Hide the Marked Items"){
+        render();
+        count();
+    }
+    else{
+        renderhide();
+        count();
+    }
+}
 function toggleCompletion(item, element) {
     item.isCompleted = !item.isCompleted;
     element.classList.toggle("marked-class");
-    count();
+    conditioanlrendering();
+    
 }
 function handleDelete(event) {
     const id = parseInt(event.target.dataset.id);
     const index = shoppingList.findIndex(item => item.itemId === id);
     if (index !== -1) {
         shoppingList[index].isDeleted=true;
-        render();
-        count();
+        // render();
+        // count();
+        conditioanlrendering();
     }
  }
 
@@ -134,12 +158,33 @@ document.querySelector("#table-list tbody").addEventListener("click", function(e
         alert("Please give proper input");
     }
     else{
-        const newItem = new ShoppingList(additeminput.value);
-        shoppingList.unshift(newItem);
-        additeminput.value="";
-        render();
-        count();
+        const index = shoppingList.findIndex(item => item.itemName === additeminput.value);
+        if(index===-1){
+            const newItem = new ShoppingList(additeminput.value);
+            shoppingList.unshift(newItem);
+            additeminput.value="";
+            conditioanlrendering();
+        }
+        else{
+            alert("Please give another name");
+        }
+        
     }
  }
 
+function hide(){
+    if(statusele.innerHTML === "Hide the Marked Items"){
+        statusele.innerHTML = "Unhide the Marked Items";
+        renderhide();
+        count();
+    }
+    else{
+        statusele.innerHTML = "Hide the Marked Items";
+        render();
+        count();
+    }
+    
+}
  
+render();
+count();

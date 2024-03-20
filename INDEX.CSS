@@ -84,15 +84,33 @@ td.button_parent{
 .info_div{
   margin-top:20px;
   font-family: "Bree Serif";
-  padding:2px;
   text-align: center;
 }
 .info{
   margin-top:10px;
   border : 3px solid lavenderblush;
   border-radius:10px;
+  width: max-content;
+  padding:6px;
+
 
 }
 .items_section{
   margin-top: 10px;
+}
+
+.row{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap : 15px;
+  
+}
+.last{
+  margin-top:20px;
+}
+.hide-button{
+  background-color: transparent;
+  border: 2px solid green;
+  border-radius: 4px;
 }
