@@ -22,7 +22,7 @@
                     </div>
                     <div class="m-1 d-flex flex-row align-items-center">
                         <input class="add_item_input text-center" id="add-item-input" placeholder="New Item....">
-                        <button class="btn btn-primary ms-1 action"><i class="icon fa fa-plus" onclick="Additem()"></i></button>
+                        <!-- <button class="btn btn-primary ms-1 action"><i class="icon fa fa-plus" onclick="Additem()"></i></button> -->
                     </div>
                 </div>
             </div>
@@ -54,8 +54,9 @@
                 </div>
                 
         </div>
-        <div  class="last">
-            <button id="hide_unhide" class="hide-button" onclick="hide()">Hide the Marked Items</button>
+        <div class="last">
+            <input type="checkbox" id="hide_unhide_checkbox" class="hide-checkbox" onClick="hide1()">
+            <label id="hide_unhide_label" class="hide-button" for="hide_unhide_checkbox">Hide the Marked Items</label>
         </div>
     </div>
     </main>
