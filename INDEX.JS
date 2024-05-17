@@ -1,7 +1,7 @@
-class ShoppingList{
+class ShoppingItem{
     static lastId=1;
     constructor(itemName,itemDescription=''){
-        this._itemId = ShoppingList.lastId++;
+        this._itemId = ShoppingItem.lastId++;
         this._itemName = itemName;
         this._itemDescription = itemDescription;
         this._isDeleted = false;
@@ -35,7 +35,9 @@ class ShoppingList{
 }
 const shoppingList = [];
 var table_body=document.querySelector("#table-list tbody")
-var statusele = document.getElementById("hide_unhide");
+var checkbox = document.getElementById('hide_unhide_checkbox');
+var label = document.getElementById('hide_unhide_label');
+
 function renderitem(item){
     console.log("renderitem")
     const row=document.createElement("tr");
@@ -119,7 +121,7 @@ function count(){
 
 
 function conditioanlrendering(){
-    if(statusele.innerHTML==="Hide the Marked Items"){
+    if(!checkbox.checked){
         render();
         count();
     }
@@ -139,8 +141,6 @@ function handleDelete(event) {
     const index = shoppingList.findIndex(item => item.itemId === id);
     if (index !== -1) {
         shoppingList[index].isDeleted=true;
-        // render();
-        // count();
         conditioanlrendering();
     }
  }
@@ -150,40 +150,53 @@ document.querySelector("#table-list tbody").addEventListener("click", function(e
       handleDelete(event);
     }
  });
-
-
+document.getElementById("add-item-input").addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+        Additem();
+    }
+});
  function Additem(){
     let additeminput=document.getElementById("add-item-input");
     if(additeminput.value===""){
         alert("Please give proper input");
+        return;
     }
-    else{
-        const index = shoppingList.findIndex(item => item.itemName === additeminput.value);
-        if(index===-1){
-            const newItem = new ShoppingList(additeminput.value);
-            shoppingList.unshift(newItem);
-            additeminput.value="";
-            conditioanlrendering();
-        }
-        else{
-            alert("Please give another name");
-        }
+    const index = shoppingList.findIndex(item => item.itemName === additeminput.value);
+    if(index!==-1){
+        alert("Please give another name");
+        return;
+    }
+    const newItem = new ShoppingItem(additeminput.value);
+    shoppingList.unshift(newItem);
+    additeminput.value="";
+    conditioanlrendering();
         
-    }
  }
 
-function hide(){
-    if(statusele.innerHTML === "Hide the Marked Items"){
-        statusele.innerHTML = "Unhide the Marked Items";
-        renderhide();
-        count();
-    }
-    else{
-        statusele.innerHTML = "Hide the Marked Items";
-        render();
-        count();
-    }
+// function hide(){
+//     if(statusele.innerHTML === "Hide the Marked Items"){
+//         statusele.innerHTML = "Unhide the Marked Items";
+//         renderhide();
+//         count();
+//     }
+//     else{
+//         statusele.innerHTML = "Hide the Marked Items";
+//         render();
+//         count();
+//     }
     
+// }
+
+function hide1() {
+    
+    if (checkbox.checked) {
+        label.textContent = "Unhide the Marked Items";
+        renderhide();
+    } else {
+        label.textContent = "Hide the Marked Items";
+        render();
+    }
+    count();
 }
  
 render();
